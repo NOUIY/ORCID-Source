@@ -180,7 +180,7 @@ the software.
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
             <plugin>
@@ -866,7 +866,7 @@ the software.
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.2</version>
+                <version>3.12.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
