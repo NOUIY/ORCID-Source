@@ -154,7 +154,7 @@ the software.
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
             <plugin>
@@ -786,7 +786,7 @@ the software.
             <dependency>
                 <groupId>org.jbibtex</groupId>
                 <artifactId>jbibtex</artifactId>
-                <version>1.0.7</version>
+                <version>1.0.20</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.opencsv</groupId>
