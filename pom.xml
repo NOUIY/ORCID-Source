@@ -31,7 +31,7 @@ the software.
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
-        <jena.version>4.4.0</jena.version>
+        <jena.version>4.5.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -154,7 +154,7 @@ the software.
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
             <plugin>
