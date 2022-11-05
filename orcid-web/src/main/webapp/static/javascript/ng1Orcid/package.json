@@ -15,7 +15,7 @@
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "angular": "^1.8.0",
     "angular-cookies": "1.7.0",
-    "angular-recaptcha": "4.1.5",
+    "angular-recaptcha": "4.2.0",
     "angular-route": "1.7.0",
     "angular-sanitize": "1.7.0",
     "angular-ui-bootstrap": "2.5.6",
