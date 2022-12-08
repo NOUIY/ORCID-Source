@@ -154,7 +154,7 @@ the software.
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
             <plugin>
@@ -871,7 +871,7 @@ the software.
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.10.5</version>
+            <version>1.12.18</version>
         </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
