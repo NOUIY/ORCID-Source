@@ -90,7 +90,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
         </plugins>
@@ -196,7 +196,7 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.5.2</version>
+            <version>3.10.4</version>
         </dependency>
     </dependencies>
 </project>
