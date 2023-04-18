@@ -155,7 +155,7 @@ the software.
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
-                    <outputDirectory />
+                    <outputDirectory/>
                 </configuration>
             </plugin>
             <plugin>
@@ -688,7 +688,7 @@ the software.
             <dependency>
               <groupId>org.hibernate</groupId>
               <artifactId>hibernate-agroal</artifactId>
-              <version>5.4.27.Final</version>
+              <version>5.6.15.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
