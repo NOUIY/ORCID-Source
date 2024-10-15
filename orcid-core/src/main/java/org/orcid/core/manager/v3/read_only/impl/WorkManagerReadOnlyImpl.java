@@ -1,5 +1,15 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
@@ -43,15 +53,6 @@ import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -196,25 +197,23 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
         // Filter the contributors list
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            for (WorkSummaryExtended wse : wseList) {
-                if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                    wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
-                } else {
-                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
-                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
-                }
+        for (WorkSummaryExtended wse : wseList) {
+            if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+            } else {
+                contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
+                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
-        }
+        }        
         return wseList;
     }
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcid(orcid, Features.STORE_TOP_CONTRIBUTORS.isActive());
+        List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
@@ -257,7 +256,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             List<WorkContributorsList> contributorList = new ArrayList<>();
             List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive() && contributors != null && !"".equals(contributors)) {
+            if (contributors != null && !"".equals(contributors)) {
                 contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
             } else {
                 contributorList = workContributorsConverter.getContributorsList(contributors);
@@ -311,11 +310,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             groupGenerator.group(work);
         }
         Works works = processGroupedWorks(groupGenerator.getGroups());
-        
-        if (Features.GROUPING_SUGGESTIONS.isActive()) {
-            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-        }
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         return works;
     }
 
@@ -326,11 +322,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             groupGenerator.group(work);
         }
         WorksExtended works = processGroupedWorksExtended(groupGenerator.getGroups());
-
-        if (Features.GROUPING_SUGGESTIONS.isActive()) {
-            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-        }
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         return works;
     }
 
@@ -502,6 +495,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             return o.toString();
         }
         return null;
-    }
-
+    }    
+    
 }

@@ -42,7 +42,6 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -344,19 +343,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 applicationSummary = new ApplicationSummary();
                 distinctApplications.put(client.getId(), applicationSummary);
                 applicationSummary.setScopePaths(new HashMap<String, String>());
-                applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
-                applicationSummary.setOrcidPath(client.getId());
                 applicationSummary.setName(client.getClientName());
+                applicationSummary.setClientId(client.getId());
                 applicationSummary.setWebsiteValue(client.getClientWebsite());
                 applicationSummary.setApprovalDate(token.getDateCreated());
-                applicationSummary.setTokenId(String.valueOf(token.getId()));
-
-                if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                    ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                    applicationSummary.setGroupOrcidPath(member.getId());
-                    applicationSummary.setGroupName(getMemberDisplayName(member));
-                }
             }
 
             Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
@@ -364,30 +354,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             for (ScopePathType tempScope : scopesGrantedToClient) {
                 try {
                     String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
-                    applicationSummary.getScopePaths().put(label, label);
+                    applicationSummary.getScopePaths().put(tempScope.toString(), label);
                 } catch (NoSuchMessageException e) {
                     LOGGER.warn("No message to display for scope " + tempScope.toString());
                 }
             }
         }
-    }
-
-    private String getMemberDisplayName(ProfileEntity member) {
-        Name recordName = recordNameManagerReadOnlyV3.getRecordName(member.getId());
-        
-        if (recordName == null) {
-            return StringUtils.EMPTY;
-        }
-
-        // If it is a member, return the credit name
-        if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
-            return recordName.getCreditName().getContent();
-        }
-
-        String memberDisplayName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(member.getId());
-        
-        return PojoUtil.isEmpty(memberDisplayName) ? StringUtils.EMPTY : memberDisplayName;
-    }
+    }    
 
     @Override
     public String getOrcidHash(String string) {

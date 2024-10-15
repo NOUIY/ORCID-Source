@@ -47,12 +47,12 @@ public class PersonDetailsManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPersonDetails() {
-        Person person = personDetailsManager.getPersonDetails(ORCID, !Features.HIDE_UNVERIFIED_EMAILS.isActive());
+        Person person = personDetailsManager.getPersonDetails(ORCID, false);
         assertNotNull(person);
         
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
-        assertEquals(5, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(7, person.getExternalIdentifiers().getExternalIdentifiers().size());
         
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
@@ -72,16 +72,11 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            assertEquals(4, person.getEmails().getEmails().size());
-    
-            for (Email email : person.getEmails().getEmails()) {
-                assertTrue(email.isVerified());
-            }
-        } else {
-            assertEquals(5, person.getEmails().getEmails().size());
-        }
+        assertEquals(4, person.getEmails().getEmails().size());
+
+        for (Email email : person.getEmails().getEmails()) {
+            assertTrue(email.isVerified());
+        }        
         
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
@@ -114,8 +109,10 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), person.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(19), person.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(Long.valueOf(18), person.getExternalIdentifiers().getExternalIdentifiers().get(1).getPutCode());
+        assertEquals(Long.valueOf(13), person.getExternalIdentifiers().getExternalIdentifiers().get(2).getPutCode());
         
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());

@@ -26,6 +26,7 @@ public class OrcidOauth2Constants {
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_ID = "tokenId";
     public static final String ORIGINAL_AUTHORIZATION_REQUEST = "org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint.ORIGINAL_AUTHORIZATION_REQUEST";
+    public static final String TOKEN_EXPIRATION_TIME = "token_expiration_time";
     
     public static final String APPROVED = "approved";
     public static final String RESOURCE_IDS = "resourceIds";
@@ -57,6 +58,7 @@ public class OrcidOauth2Constants {
     public static final String IETF_EXCHANGE_SUBJECT_TOKEN = "subject_token";
     public static final String IETF_EXCHANGE_SUBJECT_TOKEN_TYPE = "subject_token_type";
     public static final String IETF_EXCHANGE_REQUESTED_TOKEN_TYPE = "requested_token_type";
+    public static final String TOKEN_DISABLED = "token_disabled";
     
     public static final String CODE_RESPONSE_TYPE = "code";
     

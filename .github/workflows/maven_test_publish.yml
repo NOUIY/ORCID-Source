@@ -116,9 +116,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
 
       - name: bump version of the parent pom and connected projects
         if: ${{ ! inputs.install_maven_dependencies }}
@@ -165,7 +165,7 @@ jobs:
         uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
         if: always()
         with:
-          name: "${{ inputs.project }}: Unit tests results"
+          name: "maven_test_publish_${{ inputs.project }}"
           path: ${{ inputs.project }}/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true

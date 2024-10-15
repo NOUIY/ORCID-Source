@@ -17,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -115,7 +114,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(4, a.getAddress().size());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
         for (Address element : a.getAddress()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 9) {
@@ -180,11 +179,13 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(4, extIds.getExternalIdentifiers().size());
+        assertEquals(6, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;
         found4 = false;
+        found5 = false;
+        found6 = false;
 
         for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
@@ -196,6 +197,10 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
                 found3 = true;
             } else if (element.getPutCode() == 16) {
                 found4 = true;
+            } else if (element.getPutCode() == 18) {
+                found5 = true;
+            } else if (element.getPutCode() == 19) {
+                found6 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -205,6 +210,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+        assertTrue(found5);
+        assertTrue(found6);
 
         // Keywords
         assertNotNull(p.getKeywords());
@@ -318,7 +325,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(3, a.getAddress().size());
 
-        boolean found1 = false, found2 = false, found3 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
         for (Address element : a.getAddress()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 9) {
@@ -377,10 +384,12 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(5, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
+        found5 = false;
         for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 13) {
@@ -389,6 +398,10 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getPutCode() == 15) {
                 found3 = true;
+            } else if (element.getPutCode() == 18) {
+                found4 = true;
+            } else if (element.getPutCode() == 19) {
+                found5 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -397,6 +410,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
 
         // Keywords
         assertNotNull(p.getKeywords());
@@ -499,58 +514,28 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            assertEquals(4, email.getEmails().size());
-    
-            boolean found1 = false, found2 = false, found3 = false, found4 = false;
-    
-            for (Email element : email.getEmails()) {
-                if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                    found1 = true;
-                } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found2 = true;
-                } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                    found3 = true;
-                } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found4 = true;
-                } else {
-                    fail("Invalid email " + element.getEmail());
-                }
+        assertEquals(4, email.getEmails().size());
+
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+
+        for (Email element : email.getEmails()) {
+            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
+                found1 = true;
+            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+                found2 = true;
+            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+                found3 = true;
+            } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
+                found4 = true;
+            } else {
+                fail("Invalid email " + element.getEmail());
             }
-    
-            assertTrue(found1);
-            assertTrue(found2);
-            assertTrue(found3);
-            assertTrue(found4);
-        } else {
-            assertEquals(5, email.getEmails().size());
-            
-            boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
-    
-            for (Email element : email.getEmails()) {
-                if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                    found1 = true;
-                } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found2 = true;
-                } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                    found3 = true;
-                } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found4 = true;
-                } else if (element.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
-                    found5 = true;
-                } else {
-                    fail("Invalid email " + element.getEmail());
-                }
-            }
-    
-            assertTrue(found1);
-            assertTrue(found2);
-            assertTrue(found3);
-            assertTrue(found4);
-            assertTrue(found5);
         }
 
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
         this.assertAllPublicButEmails(p);
     }    
     
@@ -580,9 +565,13 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(19), extIds.getExternalIdentifiers().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
+        assertEquals(Long.valueOf(18), extIds.getExternalIdentifiers().get(1).getPutCode());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(1).getVisibility());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(2).getPutCode());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(2).getVisibility());
 
         // Keywords
         assertNotNull(p.getKeywords());
