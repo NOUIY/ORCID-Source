@@ -4,7 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
@@ -13,7 +14,6 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.record_v2.Name;
@@ -32,9 +32,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManagerV3;
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource
     private RecordNameManager recordNameManager;
@@ -133,11 +130,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void disableApplication(Long tokenId, String userOrcid) {
-        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
-    }
-
-    @Override
     public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {
         if (PojoUtil.isEmpty(orcid)) {
             return null;
@@ -163,6 +155,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
         profileDao.changeEncryptedPassword(orcid, encryptedPassword);
