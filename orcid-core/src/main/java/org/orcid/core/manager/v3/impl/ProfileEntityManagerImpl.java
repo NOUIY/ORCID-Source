@@ -215,8 +215,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean enableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, true);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, true);
+            }
+        });
     }
 
     /**
@@ -227,8 +233,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabeled on that profile
      */
     @Override
+    @Transactional
     public boolean disableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, false);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, false);
+            }
+        });
     }
 
     @Override
@@ -279,13 +291,25 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean reviewProfile(String orcid) {
-        return profileDao.reviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.reviewProfile(orcid);
+            }
+        });
     }
 
     @Override
+    @Transactional
     public boolean unreviewProfile(String orcid) {
-        return profileDao.unreviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.unreviewProfile(orcid);
+            }
+        });
     }
 
     @Override
@@ -425,8 +449,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLocale(String orcid, AvailableLocales locale) {
-        profileDao.updateLocale(orcid, locale.name());
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLocale(orcid, locale.name());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -500,9 +531,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public void updatePassword(String orcid, String password) {
-        String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
-        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                String encryptedPassword = encryptionManager.hashForInternalUse(password);
+                profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+                profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -513,7 +550,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
-        profileDao.updateLastLoginDetails(orcid, ipAddress);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLastLoginDetails(orcid, ipAddress);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -529,8 +572,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was locked
      */
     @Override
+    @Transactional
     public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
-        return profileDao.lockProfile(orcid, lockReason, description, adminUser);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.lockProfile(orcid, lockReason, description, adminUser);
+            }
+        });
     }
 
     /**
@@ -541,8 +590,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was unlocked
      */
     @Override
+    @Transactional
     public boolean unlockProfile(String orcid) {
-        return profileDao.unlockProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.unlockProfile(orcid);
+            }
+        });
     }
 
     @Override
@@ -550,19 +605,40 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getLastLogin(orcid);
     }
 
+    @Override
     @Transactional
     public void startSigninLock(String orcid) {
-        profileDao.startSigninLock(orcid);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.startSigninLock(orcid);
+                return true;
+            }
+        });
     }
     
+    @Override
     @Transactional
     public void resetSigninLock(String orcid) {
-        profileDao.resetSigninLock(orcid);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.resetSigninLock(orcid);
+                return true;
+            }
+        });
     }
     
+    @Override
     @Transactional
     public void updateSigninLock(String orcid, Integer count) {
-        profileDao.updateSigninLock(orcid, count);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateSigninLock(orcid, count);
+                return true;
+            }
+        });
     }
     
     public List<Object[]> getSigninLock(String orcid) {
@@ -570,8 +646,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean updateDeprecation(String deprecated, String primary) {
-        return profileDao.updateDeprecation(deprecated, primary);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeprecation(deprecated, primary);
+            }
+        });
     }
 
     /**

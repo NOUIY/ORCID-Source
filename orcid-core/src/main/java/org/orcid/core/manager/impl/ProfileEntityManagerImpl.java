@@ -20,6 +20,9 @@ import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -38,6 +41,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -71,8 +77,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where enabled on the given record
      */
     @Override
+    @Transactional
     public boolean enableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, true);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, true);
+            }
+        });
     }
 
     /**
@@ -83,8 +95,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabled on the given record
      */
     @Override
+    @Transactional
     public boolean disableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, false);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, false);
+            }
+        });
     }
 
     @Override
@@ -120,13 +138,25 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean reviewProfile(String orcid) {
-        return profileDao.reviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.reviewProfile(orcid);
+            }
+        });
     }
 
     @Override
+    @Transactional
     public boolean unreviewProfile(String orcid) {
-        return profileDao.unreviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.unreviewProfile(orcid);
+            }
+        });
     }
 
     @Override
@@ -144,8 +174,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLocale(String orcid, Locale locale) {
-        profileDao.updateLocale(orcid, locale.name());
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLocale(orcid, locale.name());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -157,8 +194,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public void updatePassword(String orcid, String password) {
-        String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                String encryptedPassword = encryptionManager.hashForInternalUse(password);
+                profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -167,8 +210,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
-        profileDao.updateLastLoginDetails(orcid, ipAddress);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLastLoginDetails(orcid, ipAddress);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -183,7 +233,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }    
 
     @Override
+    @Transactional
     public void update2FASecret(String orcid, String secret) {
-        profileDao.update2FASecret(orcid, secret);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.update2FASecret(orcid, secret);
+                return true;
+            }
+        });
     }        
 }
