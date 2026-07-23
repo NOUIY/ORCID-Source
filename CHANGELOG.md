@@ -1,3 +1,9 @@
+## v3.0.3 - 2026-07-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.2...v3.0.3)
+
+- [#7585](https://github.com/ORCID/ORCID-Source/pull/7585): Refactor unit tests
+
 ## v3.0.2 - 2026-07-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v3.0.1...v3.0.2)
